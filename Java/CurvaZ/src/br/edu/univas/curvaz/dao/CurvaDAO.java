@@ -15,7 +15,7 @@ public class CurvaDAO {
 	private CurvaTO curva;
 
 	public CurvaDAO() {
-	
+
 	}
 
 	public ArrayList<CurvaTO> selectZ(String str) throws SQLException {
@@ -35,7 +35,7 @@ public class CurvaDAO {
 				curva.setValor(rs.getString(1));
 				curva.setNivelConfianca(rs.getDouble(2));
 				curvas.add(curva);
-				//System.out.println(curva.getValor() + " - "  + curva.getNivelConfianca());
+				System.out.println(curva.getValor() + " - " + curva.getNivelConfianca());
 			}
 			conn.close();
 		} catch (NumberFormatException e) {
@@ -83,14 +83,23 @@ public class CurvaDAO {
 
 	public String findZ(String str) throws SQLException {
 		String valorZ = null;
+		double result = 0;
+		double confiancaInformada = converteDouble(converteConfianca(str));
 		ArrayList<CurvaTO> curvas = new ArrayList<CurvaTO>();
 		curvas = selectZ(str);
-		
+
 		for (CurvaTO curvaTO : curvas) {
-			if (converteDouble(converteConfianca(str)) == curvaTO.getNivelConfianca()) {
+			double nivelConfianca = curvaTO.getNivelConfianca();
+			if (confiancaInformada <= nivelConfianca) {
 				return curvaTO.getValor();
+			} else if ((confiancaInformada > nivelConfianca)) {
+				result = confiancaInformada - nivelConfianca;
+			}else if((confiancaInformada < nivelConfianca)) {
+				result = nivelConfianca - confiancaInformada;
 			}
+
 		}
+		System.out.println(result);
 		return valorZ;
 	}
 }

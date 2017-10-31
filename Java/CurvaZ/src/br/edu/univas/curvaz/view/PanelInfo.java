@@ -106,6 +106,7 @@ public class PanelInfo extends JPanel {
 
 	private void btClicked() {
 		if (verifyEmptyString(getJt().getText())) {
+			System.out.println(getJt().getText());
 			String valorZ = controll.localizaZ(getJt().getText());
 			setResult(valorZ);
 		} else {
