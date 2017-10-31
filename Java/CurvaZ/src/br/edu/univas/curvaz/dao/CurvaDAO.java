@@ -15,7 +15,7 @@ public class CurvaDAO {
 	private CurvaTO curva;
 
 	public CurvaDAO() {
-		curva = new CurvaTO();
+	
 	}
 
 	public ArrayList<CurvaTO> selectZ(String str) throws SQLException {
@@ -25,17 +25,17 @@ public class CurvaDAO {
 			String conf = cutString(converteConfianca(str));
 			curvas = new ArrayList<CurvaTO>();
 			conn = DBUtil.openConnection();
-			String sql = " SELECT valor, confianca, nivel_confianca FROM curva WHERE confianca LIKE ? ORDER BY valor ";
+			String sql = " SELECT valor, nivel_confianca FROM curva WHERE confianca LIKE ? ORDER BY valor ";
 
 			PreparedStatement prep = conn.prepareStatement(sql);
 			prep.setString(1, '%' + conf + '%');
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
+				curva = new CurvaTO();
 				curva.setValor(rs.getString(1));
-				curva.setConfianca(rs.getString(2));
-				curva.setNivelConfianca(rs.getDouble(3));
+				curva.setNivelConfianca(rs.getDouble(2));
 				curvas.add(curva);
-				//System.out.println(curva.getValor() + " - " + curva.getConfianca() + " - " + curva.getNivelConfianca());
+				//System.out.println(curva.getValor() + " - "  + curva.getNivelConfianca());
 			}
 			conn.close();
 		} catch (NumberFormatException e) {
@@ -85,11 +85,10 @@ public class CurvaDAO {
 		String valorZ = null;
 		ArrayList<CurvaTO> curvas = new ArrayList<CurvaTO>();
 		curvas = selectZ(str);
-		int i = 0;
+		
 		for (CurvaTO curvaTO : curvas) {
-			if (converteDouble(converteConfianca(str)) / curvaTO.getNivelConfianca() == 1) {
-				System.out.println("Teste" + i++);
-
+			if (converteDouble(converteConfianca(str)) == curvaTO.getNivelConfianca()) {
+				return curvaTO.getValor();
 			}
 		}
 		return valorZ;

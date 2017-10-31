@@ -107,7 +107,7 @@ public class PanelInfo extends JPanel {
 	private void btClicked() {
 		if (verifyEmptyString(getJt().getText())) {
 			String valorZ = controll.localizaZ(getJt().getText());
-			System.out.println(valorZ);
+			setResult(valorZ);
 		} else {
 			JOptionPane.showMessageDialog(null, "Campo nivel de confiça não pode ser vazio!", "ERROR",
 					JOptionPane.ERROR_MESSAGE);
@@ -122,9 +122,7 @@ public class PanelInfo extends JPanel {
 		return true;
 	}
 
-	private void setResult(double x) {
-		DecimalFormat fmt = new DecimalFormat("0.00");
-		String str = fmt.format(x);
+	private void setResult(String str) {
 		getLabelResult().setText(str);
 		getJt().setText("");
 	}
