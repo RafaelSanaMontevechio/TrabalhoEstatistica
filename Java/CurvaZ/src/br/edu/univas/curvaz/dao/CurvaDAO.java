@@ -73,7 +73,11 @@ public class CurvaDAO {
 
 	// Pega apenas os 4 primeiros caracteres
 	private String cutString(String str) {
-		return str.substring(0, 4);
+		if (str.length() < 4) {
+			return str;
+		} else {
+			return str.substring(0, 4);
+		}
 	}
 
 	private double converteDouble(String str) {
@@ -94,7 +98,7 @@ public class CurvaDAO {
 				return curvaTO.getValor();
 			} else if ((confiancaInformada > nivelConfianca)) {
 				result = confiancaInformada - nivelConfianca;
-			}else if((confiancaInformada < nivelConfianca)) {
+			} else if ((confiancaInformada < nivelConfianca)) {
 				result = nivelConfianca - confiancaInformada;
 			}
 
