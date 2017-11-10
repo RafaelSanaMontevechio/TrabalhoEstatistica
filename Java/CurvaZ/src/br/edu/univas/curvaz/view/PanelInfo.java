@@ -6,9 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,8 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import br.edu.univas.curvaz.controller.Controller;
-import br.edu.univas.curvaz.dao.CurvaDAO;
-import br.edu.univas.curvaz.to.CurvaTO;
 
 public class PanelInfo extends JPanel {
 
@@ -105,7 +100,9 @@ public class PanelInfo extends JPanel {
 	}
 
 	private void btClicked() {
-		if (verifyEmptyString(getJt().getText())) {
+		if (getJt().getText().equals("50")) {
+			setResult("0");
+		} else if (verifyEmptyString(getJt().getText())) {
 			System.out.println(getJt().getText());
 			String valorZ = controll.localizaZ(getJt().getText());
 			setResult(valorZ);
