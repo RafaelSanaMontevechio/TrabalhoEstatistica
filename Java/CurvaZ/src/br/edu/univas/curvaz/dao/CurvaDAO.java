@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -25,7 +26,7 @@ public class CurvaDAO {
 			String conf = cutString(converteConfianca(str));
 			curvas = new ArrayList<CurvaTO>();
 			conn = DBUtil.openConnection();
-			String sql = " SELECT valor, nivel_confianca FROM curva WHERE confianca LIKE ? ORDER BY valor ";
+			String sql = " SELECT valor, nivel_confianca, confianca FROM curva WHERE confianca LIKE ? ORDER BY valor ";
 
 			PreparedStatement prep = conn.prepareStatement(sql);
 			prep.setString(1, '%' + conf + '%');
@@ -34,8 +35,9 @@ public class CurvaDAO {
 				curva = new CurvaTO();
 				curva.setValor(rs.getString(1));
 				curva.setNivelConfianca(rs.getDouble(2));
+				curva.setConfianca(rs.getString(3));
 				curvas.add(curva);
-				System.out.println(curva.getValor() + " - " + curva.getNivelConfianca());
+				System.out.println(curva.getValor() + " - " + curva.getConfianca());
 			}
 			conn.close();
 		} catch (NumberFormatException e) {
@@ -57,7 +59,9 @@ public class CurvaDAO {
 				aux = (nivelConfianca / 2) / 100;
 			}
 		}
+		//String result = String.format("%.4f", aux);
 		String result = String.valueOf(aux);
+		//System.out.println(result);
 		return result;
 	}
 
@@ -80,6 +84,10 @@ public class CurvaDAO {
 		}
 	}
 
+	private String cut(String str) {
+		return str.substring(2);
+	}
+
 	private double converteDouble(String str) {
 		double n = Double.parseDouble(str);
 		return n;
@@ -87,23 +95,28 @@ public class CurvaDAO {
 
 	public String findZ(String str) throws SQLException {
 		String valorZ = null;
-		double result = 0;
-		double confiancaInformada = converteDouble(converteConfianca(str));
 		ArrayList<CurvaTO> curvas = new ArrayList<CurvaTO>();
+		ArrayList<CurvaTO> aux = new ArrayList<CurvaTO>();
 		curvas = selectZ(str);
-
+		double confiancaInformada =  converteDouble(converteConfianca(str));
 		for (CurvaTO curvaTO : curvas) {
-			double nivelConfianca = curvaTO.getNivelConfianca();
-			if (confiancaInformada <= nivelConfianca) {
-				return curvaTO.getValor();
-			} else if ((confiancaInformada > nivelConfianca)) {
-				result = confiancaInformada - nivelConfianca;
-			} else if ((confiancaInformada < nivelConfianca)) {
-				result = nivelConfianca - confiancaInformada;
+			curva = new CurvaTO();
+			if (confiancaInformada == curvaTO.getNivelConfianca()) {
+				valorZ = curvaTO.getValor();
+			} else if (confiancaInformada > curvaTO.getNivelConfianca()) {
+				curva.setResto((Integer.parseInt(cut(converteConfianca(str)))*10) - (Integer.parseInt(cut(curvaTO.getConfianca()))));
+				curva.setValor(curvaTO.getValor());
+				System.out.println((Integer.parseInt(cut(converteConfianca(str)))*10) + " - " + Integer.parseInt(cut(curvaTO.getConfianca())));
+			} else {
+				curva.setResto(Integer.parseInt(cut(curvaTO.getConfianca())) - (Integer.parseInt(cut(converteConfianca(str)))*10));
+				curva.setValor(curvaTO.getValor());
+				System.out.println(Integer.parseInt(cut(curvaTO.getConfianca())) + " - " + (Integer.parseInt(cut(converteConfianca(str)))*10));
 			}
-
+			aux.add(curva);
 		}
-		System.out.println(result);
+		for (CurvaTO curvaTO : aux) {
+			System.out.println(curvaTO.getResto() + " - " + curvaTO.getValor());
+		}
 		return valorZ;
 	}
 }

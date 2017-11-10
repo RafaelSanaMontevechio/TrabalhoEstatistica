@@ -6,6 +6,7 @@ public class CurvaTO {
 	private String valor;
 	private double valor_z;
 	private double nivelConfianca;
+	private int resto;
 
 	public String getConfianca() {
 		return confianca;
@@ -38,4 +39,14 @@ public class CurvaTO {
 	public void setNivelConfianca(double nivelConfianca) {
 		this.nivelConfianca = nivelConfianca;
 	}
+
+	public int getResto() {
+		return resto;
+	}
+
+	public void setResto(int resto) {
+		this.resto = resto;
+	}
+	
+	
 }
