@@ -51,7 +51,7 @@ public class CurvaDAO {
 		double nivelConfianca, aux = 0;
 
 		if (verifica(nivelConfianca = Double.parseDouble(str))) {
-			if (nivelConfianca < 50.99) {
+			if (nivelConfianca < 50) {
 				aux = (nivelConfianca / 100);
 			} else {
 				aux = (nivelConfianca / 2) / 100;
