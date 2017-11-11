@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -37,7 +36,7 @@ public class CurvaDAO {
 				curva.setNivelConfianca(rs.getDouble(2));
 				curva.setConfianca(rs.getString(3));
 				curvas.add(curva);
-				System.out.println(curva.getValor() + " - " + curva.getConfianca());
+				// System.out.println(curva.getValor() + " - " + curva.getConfianca());
 			}
 			conn.close();
 		} catch (NumberFormatException e) {
@@ -59,10 +58,7 @@ public class CurvaDAO {
 				aux = (nivelConfianca / 2) / 100;
 			}
 		}
-		//String result = String.format("%.4f", aux);
-		String result = String.valueOf(aux);
-		//System.out.println(result);
-		return result;
+		return String.valueOf(aux);
 	}
 
 	// Verifica se numero e valido
@@ -95,27 +91,16 @@ public class CurvaDAO {
 
 	public String findZ(String str) throws SQLException {
 		String valorZ = null;
+		int x = 0;
 		ArrayList<CurvaTO> curvas = new ArrayList<CurvaTO>();
 		ArrayList<CurvaTO> aux = new ArrayList<CurvaTO>();
 		curvas = selectZ(str);
-		double confiancaInformada =  converteDouble(converteConfianca(str));
+		double confiancaInformada = converteDouble(converteConfianca(str));
 		for (CurvaTO curvaTO : curvas) {
 			curva = new CurvaTO();
-			if (confiancaInformada == curvaTO.getNivelConfianca()) {
-				valorZ = curvaTO.getValor();
-			} else if (confiancaInformada > curvaTO.getNivelConfianca()) {
-				curva.setResto((Integer.parseInt(cut(converteConfianca(str)))*10) - (Integer.parseInt(cut(curvaTO.getConfianca()))));
-				curva.setValor(curvaTO.getValor());
-				System.out.println((Integer.parseInt(cut(converteConfianca(str)))*10) + " - " + Integer.parseInt(cut(curvaTO.getConfianca())));
-			} else {
-				curva.setResto(Integer.parseInt(cut(curvaTO.getConfianca())) - (Integer.parseInt(cut(converteConfianca(str)))*10));
-				curva.setValor(curvaTO.getValor());
-				System.out.println(Integer.parseInt(cut(curvaTO.getConfianca())) + " - " + (Integer.parseInt(cut(converteConfianca(str)))*10));
+			if (confiancaInformada <= curvaTO.getNivelConfianca()) {
+				return curvaTO.getValor();
 			}
-			aux.add(curva);
-		}
-		for (CurvaTO curvaTO : aux) {
-			System.out.println(curvaTO.getResto() + " - " + curvaTO.getValor());
 		}
 		return valorZ;
 	}
