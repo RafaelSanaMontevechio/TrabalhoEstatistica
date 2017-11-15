@@ -17,7 +17,7 @@ public class Controller {
 	public String localizaZ(String str) {
 		String valorZ = null;
 		try {
-			valorZ = curva.findZ(str);
+			valorZ = curva.valorZ(str);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro ao localizar o valor de Z\n" + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);

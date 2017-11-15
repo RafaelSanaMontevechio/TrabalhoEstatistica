@@ -36,7 +36,7 @@ public class CurvaDAO {
 				curva.setNivelConfianca(rs.getDouble(2));
 				curva.setConfianca(rs.getString(3));
 				curvas.add(curva);
-				// System.out.println(curva.getValor() + " - " + curva.getConfianca());
+				System.out.println(curva.getValor() + " - " + curva.getConfianca());
 			}
 			conn.close();
 		} catch (NumberFormatException e) {
@@ -89,19 +89,48 @@ public class CurvaDAO {
 		return n;
 	}
 
-	public String findZ(String str) throws SQLException {
-		String valorZ = null;
-		int x = 0;
+	public ArrayList<CurvaTO> findZ(String str) throws SQLException {
+
 		ArrayList<CurvaTO> curvas = new ArrayList<CurvaTO>();
 		ArrayList<CurvaTO> aux = new ArrayList<CurvaTO>();
 		curvas = selectZ(str);
 		double confiancaInformada = converteDouble(converteConfianca(str));
 		for (CurvaTO curvaTO : curvas) {
 			curva = new CurvaTO();
-			if (confiancaInformada <= curvaTO.getNivelConfianca()) {
-				return curvaTO.getValor();
+			if (confiancaInformada == curvaTO.getNivelConfianca()) {
+				curva.setResto(0);
+				curva.setValor(curvaTO.getValor());
+			} else if (confiancaInformada > curvaTO.getNivelConfianca()) {
+				curva.setResto((Integer.parseInt(cut(converteConfianca(str))) * 10)
+						- (Integer.parseInt(cut(curvaTO.getConfianca()))));
+				curva.setValor(curvaTO.getValor());
+			} else if (confiancaInformada < curvaTO.getNivelConfianca()) {
+				curva.setResto((Integer.parseInt(cut(curvaTO.getConfianca())))
+						- (Integer.parseInt(cut(converteConfianca(str)))) * 10);
+				curva.setValor(curvaTO.getValor());
+			}
+			aux.add(curva);
+		}
+		return aux;
+	}
+
+	public String valorZ(String str) throws SQLException {
+		String z = null;
+		int x = 50000;
+		ArrayList<CurvaTO> aux = new ArrayList<CurvaTO>();
+		aux = findZ(str);
+		for (CurvaTO curvaTO : aux) {
+			if (curvaTO.getResto() < x) {
+				x = curvaTO.getResto();
 			}
 		}
-		return valorZ;
+		for (CurvaTO curvaTO : aux) {
+			if (curvaTO.getResto() == 0) {
+				z = curvaTO.getValor();
+			} else if (curvaTO.getResto() == x) {
+				z = curvaTO.getValor();
+			}
+		}
+		return z;
 	}
 }

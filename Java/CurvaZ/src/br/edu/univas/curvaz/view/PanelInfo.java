@@ -63,7 +63,6 @@ public class PanelInfo extends JPanel {
 			bt = new JButton();
 			bt.setText("Localiza Z");
 			bt.addActionListener(new ActionListener() {
-
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					btClicked();
@@ -100,15 +99,20 @@ public class PanelInfo extends JPanel {
 	}
 
 	private void btClicked() {
-		if (getJt().getText().equals("50")) {
-			setResult("0");
-		} else if (verifyEmptyString(getJt().getText())) {
-			System.out.println(getJt().getText());
-			String valorZ = controll.localizaZ(getJt().getText());
-			setResult(valorZ);
-		} else {
+		if (getJt().getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "Campo nivel de confiça não pode ser vazio!", "ERROR",
 					JOptionPane.ERROR_MESSAGE);
+		} else if (Double.parseDouble(getJt().getText()) <= 0) {
+			JOptionPane.showMessageDialog(null, "Valor não pode ser menor que 0!\n " + getJt().getText(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} else if (Double.parseDouble(getJt().getText()) > 100) {
+			JOptionPane.showMessageDialog(null, "Valor não pode ser maior que 100!\n " + getJt().getText(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} else if (getJt().getText().equals("50")) {
+			setResult("0");
+		} else {
+			String valorZ = controll.localizaZ(getJt().getText());
+			setResult(valorZ);
 		}
 	}
 
